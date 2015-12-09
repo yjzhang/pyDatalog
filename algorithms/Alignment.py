@@ -68,7 +68,7 @@ def normalizeSwDistance(lenA,lenB,score):
     l = max(lenA,lenB)
     return float(score)/(float(l*params["match"]))
 
-def SmithWaterman(a,b,swparams):
+def SmithWaterman(a,b,swparams=default_swparams):
     """
     Simple implementation of standard Smith-Waterman local alignment routine
 
@@ -124,6 +124,7 @@ def SmithWaterman(a,b,swparams):
     maxPath = [maxIdx]
     (maxScore,ib,ia) = (scores[maxIdx[0]][maxIdx[1]],maxIdx[0],maxIdx[1])
     print("Maximum score = " + str(maxScore))
+    alignmentScore = maxScore
     while True:
         scoreLeft = scores[ib][ia-1] if ib >= 0 and ia-1 >= 0 else -1
         scoreUp = scores[ib-1][ia] if ib-1 >= 0 and ia >= 0 else -1
@@ -159,4 +160,4 @@ def SmithWaterman(a,b,swparams):
 
     print("A: " + alignedA)
     print("B: " + alignedB)
-    return maxScore
+    return alignmentScore

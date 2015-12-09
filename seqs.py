@@ -1,3 +1,4 @@
+from algorithms import Alignment
 from pyDatalog import pyDatalog
 
 # create some python functions as helpers, because pyDatalog allows this
@@ -14,13 +15,20 @@ def strlen(x):
 def match(a,b):
     return a==b
 
+# Smith-Waterman wrapper
+def sw_wrapper(a,b):
+    print('{0} : {1}'.format(a,b))
+    score = Alignment.SmithWaterman(a,b)
+    print('score = {0}'.format(score))
+    return score
+
 # create required terms
 # variables
 pyDatalog.create_terms('X,Y,Z,LX,LY')
 # data tables
-pyDatalog.create_terms('seqs,cross_seqs,cross_seqs_lens,matches,seqlens')
+pyDatalog.create_terms('seqs,cross_seqs,cross_seqs_lens,matches,seqlens,sw')
 # python functions
-pyDatalog.create_terms('strlen,match')
+pyDatalog.create_terms('strlen,match,sw_wrapper')
 
 # assert some facts (i.e. add some sequences to the 'seqs' 'table')
 sequences = ['ATA','ACGA','ATTCGAA','GGAGA','TTTACC','ACTGGAG','TGGACC']
@@ -41,11 +49,21 @@ cross_seqs(X,Y) <= seqs(X) & seqs(Y) & (X!=Y)
 print('cross_seqs')
 print(cross_seqs(X,Y))
 
+# generate alignment scores by calling out to a python function
+# now, can we actually write the algorithm in pyDatalog syntax???
+sw(X,Y,Z) <= cross_seqs(X,Y) & (Z==sw_wrapper(X,Y))
+print('Smith-Waterman')
+print(sw(X,Y,Z))
+
+#sw(X,Y) <= cross_seqs(X,Y) & (Alignment.SmithWaterman(X,Y)>=0)
+#print(sw(X,Y))
+
 # generate lengths for each sequence in cross_seqs
 cross_seqs_lens(X,Y,LX,LY) <= cross_seqs(X,Y) & (LX==strlen(X)) & (LY==strlen(Y))
 print('cross_seqs_lens')
 print(cross_seqs_lens(X,Y,LX,LY))
 
+"""
 # here, we "cheat" and just call out to our python match function to filter results
 # for fun, let's get all the pairs (X,Y) from cross_seqs that have same first character
 matches(X,Y) <= cross_seqs(X,Y) & (match(X[0],Y[0])==True)
@@ -60,3 +78,4 @@ pyDatalog.create_terms('match2,matches2')
 # this returns same as matches 'table' above, hooray!
 matches2(X,Y) <= cross_seqs(X,Y) & (match2[X[0],Y[0]]==True)
 print(matches2(X,Y))
+"""
