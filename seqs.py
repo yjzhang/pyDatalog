@@ -79,3 +79,53 @@ pyDatalog.create_terms('match2,matches2')
 matches2(X,Y) <= cross_seqs(X,Y) & (match2[X[0],Y[0]]==True)
 print(matches2(X,Y))
 """
+
+# create required terms
+# variables
+pyDatalog.create_terms('X,Y,Z,LX,LY,N')
+# data tables
+pyDatalog.create_terms('prefix,r,suffix,cc')
+# python functions
+pyDatalog.create_terms('strlen,match')
+
+# assert some facts (i.e. add some sequences to the 'seqs' 'table')
+sequences = ['ATACCAGAGAC','GACGA','ATTCGAC']
+for s in sequences:
+    + r(s)
+
+# try to implement some sequence datalog stuff in pyDatalog -- see if stuff just works
+
+# get all prefixes of all sequences in r(X)
+prefix(X) <= r(X)
+prefix(Z) <= prefix(X) & (N==strlen(X)) & (Z==X[0:N-1]) & (Z!='')
+print('prefix')
+print(prefix(X))
+
+# concatenation
+cc(Z) <= r(X) & r(Y) & (X!=Y) & (Z==(X+Y))
+print('concatenation')
+print(cc(Z))
+
+# get all suffixes of all sequences in r(X)
+suffix(X) <= r(X)
+suffix(Z) <= suffix(X) & (Z==X[1:]) & (Z!='')
+print('suffix')
+print(suffix(X))
+
+# seeds - extract all subsequences of length SL from sequences in r(X)
+pyDatalog.create_terms('seeds,SL,temp')
+temp(X) <= suffix(X) & (SL==5) & (strlen(X)>=SL)
+print(temp(X))
+seeds(Z) <= temp(X) & (SL==5) & (Z==X[0:SL])
+print(seeds(Z))
+
+# different implementation of all substrings (seeds) of length SL
+# creates table of (Z,X) pairs where Z is original sequence and X is seed of length SL
+pyDatalog.create_terms('newseeds,N1,N2')
+newseeds(Z,X) <= r(Z) & (SL==5) & (N1.in_(range_(strlen(Z)))) & (X==Z[N1:N1+SL]) & (strlen(X)>=SL)
+
+print(newseeds(Z,X))
+
+pyDatalog.create_terms('lens')
+lens(X,N) <= r(X) & (N==strlen(X))
+print(lens(X,N))
