@@ -122,9 +122,9 @@ print(seeds(Z))
 # different implementation of all substrings (seeds) of length SL
 # creates table of (Z,X) pairs where Z is original sequence and X is seed of length SL
 pyDatalog.create_terms('newseeds,N1,N2')
-newseeds(Z,X) <= r(Z) & (SL==5) & (N1.in_(range_(strlen(Z)))) & (X==Z[N1:N1+SL]) & (strlen(X)>=SL)
+newseeds(Z,N1,X) <= r(Z) & (SL==5) & (N1.in_(range_(strlen(Z)))) & (X==Z[N1:N1+SL]) & (strlen(X)>=SL)
 
-print(newseeds(Z,X))
+print(newseeds(Z,N1,X))
 
 pyDatalog.create_terms('lens')
 lens(X,N) <= r(X) & (N==strlen(X))
