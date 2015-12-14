@@ -7,8 +7,94 @@ Alignment: this module provides some basic sequence alignment functions.
 
 Algorithms implemented:
 1. Local alignment, Smith-Waterman
-
+2. Exact search
+3. kmer (substring) matching
+4. Levenshtein distance
+5. Hamming distance
 """
+
+# exact search
+def ExactMatch(a,b):
+    """
+    Search for string b in string a
+    
+    Return True if b is a substring of a
+    """
+    return True if a.find(b) >= 0 else False
+
+# kmer (substring) matching
+def getKmers(sequence, k):
+    """
+    Returns list of the kmers (in original sequence order) in the provided sequence
+    Sequence length must be >= k, otherwise empty list is returned
+    """
+    if len(sequence) >= k :
+        return [ ''.join(sequence[i:i+k]) for i in xrange(len(sequence)-k+1) ]
+    return list()
+
+def KmerMatch(a,b,k):
+    """
+    Compare two strings based on 'kmers'
+    """
+    pass
+
+# Levenshtein distance
+def Levenshtein(a,b):
+    """
+    naive Levenshtein distance function
+    """
+    m = len(a)
+    n = len(b)
+
+    # init scores matrix (m+1)*(n+1)
+    scores = [[0 for x in xrange(n+1)] for x in xrange(m+1)]
+    for i in xrange(1,m+1):
+        scores[i][0] = i
+    for j in xrange(1,n+1):
+        scores[0][j] = j
+
+    for j in xrange(0,n):    
+        jj = j+1
+        for i in xrange(0,m):
+            ii = i+1
+            if a[i] == b[j]:
+                scores[ii][jj] = scores[ii-1][jj-1] # match
+            else:
+                scores[ii][jj] = min(scores[ii-1][jj]+1, # deletion
+                                     scores[ii][jj-1]+1, # insertion
+                                     scores[ii-1][jj-1]+1) # substitution
+
+    return scores[m][n]
+
+def accept_Levenshtein(a,b,n):
+    """
+    Returns True if Levenshtein(a,b) is in [0,n], i.e. within n
+    """
+    s = Levenshtein(a,b)
+    return True if s >= 0 and s <= n else False
+
+# Hamming distance
+def Hamming(a,b):
+    """
+    naive Hamming distance computation
+
+    returns -1 if length mismatch
+    """
+    if len(a) != len(b):
+        # what to return for mismatched lengths?
+        return -1 #max(len(a),len(b))
+    diffs = 0
+    for c1,c2 in zip(a,b):
+        if c1 != c2:
+            diffs += 1
+    return diffs
+
+def accept_Hamming(a,b,n):
+    """
+    Returns True if Hamming(a,b) is in [0,n], i.e. within n
+    """
+    s = Hamming(a,b)
+    return True if s >= 0 and s <= n else False
 
 # Smith-Waterman alignment scoring parameters
 default_swparams = {
@@ -68,7 +154,7 @@ def normalizeSwDistance(lenA,lenB,score):
     l = max(lenA,lenB)
     return float(score)/(float(l*params["match"]))
 
-def SmithWaterman(a,b,swparams=default_swparams):
+def SmithWaterman(a,b,swparams=default_swparams, debug=False):
     """
     Simple implementation of standard Smith-Waterman local alignment routine
 
@@ -85,8 +171,9 @@ def SmithWaterman(a,b,swparams=default_swparams):
     """
     
     # print input sequences
-    print('input A: {0}'.format(a))
-    print('input B: {0}'.format(b))
+    if debug:
+        print('input A: {0}'.format(a))
+        print('input B: {0}'.format(b))
 
     # format strings, prepending '-' character to each sequence
     (a,lenA) = stringFormatAndLength(a)
@@ -123,7 +210,8 @@ def SmithWaterman(a,b,swparams=default_swparams):
 
     maxPath = [maxIdx]
     (maxScore,ib,ia) = (scores[maxIdx[0]][maxIdx[1]],maxIdx[0],maxIdx[1])
-    print("Maximum score = " + str(maxScore))
+    if debug:
+        print("Maximum score = " + str(maxScore))
     alignmentScore = maxScore
     while True:
         scoreLeft = scores[ib][ia-1] if ib >= 0 and ia-1 >= 0 else -1
@@ -157,7 +245,9 @@ def SmithWaterman(a,b,swparams=default_swparams):
 
         lastR = r
         lastC = c
+    
+    if debug:
+        print("A: " + alignedA)
+        print("B: " + alignedB)
 
-    print("A: " + alignedA)
-    print("B: " + alignedB)
     return alignmentScore
