@@ -28,15 +28,27 @@ def getKmers(sequence, k):
     Returns list of the kmers (in original sequence order) in the provided sequence
     Sequence length must be >= k, otherwise empty list is returned
     """
+    k = int(k)
     if len(sequence) >= k :
-        return [ ''.join(sequence[i:i+k]) for i in xrange(len(sequence)-k+1) ]
+        l = [ ''.join(sequence[i:i+k]) for i in xrange(len(sequence)-k+1) ]
+        return l
     return list()
 
 def KmerMatch(a,b,k):
     """
     Compare two strings based on 'kmers'
+
+    Returns the number of unique kmers that matched
     """
-    pass
+    amers = getKmers(a,k)
+    bmers = getKmers(b,k)
+
+    matches = list(set(amers) | set(bmers))
+    #print(matches)
+    #print(len(matches))
+    if matches:
+        return len(matches)
+    return 0
 
 # Levenshtein distance
 def Levenshtein(a,b):
