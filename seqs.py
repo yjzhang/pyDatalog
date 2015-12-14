@@ -129,3 +129,42 @@ print(newseeds(Z,N1,X))
 pyDatalog.create_terms('lens')
 lens(X,N) <= r(X) & (N==strlen(X))
 print(lens(X,N))
+
+
+def score(a,b):
+    if a==b:
+        return 0
+    return 1
+
+pyDatalog.create_terms('hamming,words,w,score,hammingscores,S,HS,K,hs')
+
+w = ['hello','helps','world','worne']
+for ww in w:
+    + words(ww)
+
+hammingscores(X,Y,K,S) <= words(X) & words(Y) & (K.in_(range_(strlen(X)))) & (strlen(X)==strlen(Y)) & (S==score(X[K],Y[K]))
+print(hammingscores(X,Y,N,S))
+
+# hamming distance function
+(hs[X,Y]==sum_(S, for_each=N)) <= hammingscores(X,Y,N,S)
+
+# query for a specific X,Y pair of words within hammingscores table
+print(hs['hello','world']==Y)
+
+# generate hamming distance for every X,Y pair in hammingscores table
+hs(X,Y,HS) <= hammingscores(X,Y,N,S) & (HS==hs[X,Y])
+print(hs(X,Y,HS))
+
+"""
+hammingscores(X,Y,K,S) <= words(X) & words(Y) & (K.in_(range_(strlen(X)))) & (strlen(X)==strlen(Y)) & (S==score(X[K],Y[K]))
+print(hammingscores(X,Y,N,S))
+cc(Z,N,S) <= hammingscores(X,Y,N,S) & (Z==X+Y)
+print(cc(X,N,S))
+
+hamming(X,HS) <= cc(X,N,S) & (HS==S)
+print(hamming(X,HS))
+
+(hs[X]==sum_(S, for_each=N)) <= cc(X,N,S)
+
+print(hs['hellohelps']==Y)
+"""
