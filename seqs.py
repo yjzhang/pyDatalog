@@ -130,7 +130,6 @@ pyDatalog.create_terms('lens')
 lens(X,N) <= r(X) & (N==strlen(X))
 print(lens(X,N))
 
-
 def score(a,b):
     if a==b:
         return 0
@@ -168,3 +167,4 @@ print(hamming(X,HS))
 
 print(hs['hellohelps']==Y)
 """
+
