@@ -1,3 +1,5 @@
+import random
+
 from pyDatalog import pyDatalog
 
 # string length function
@@ -13,3 +15,9 @@ def match(a,b):
     return a==b
 
 pyDatalog.create_terms('strlen, match')
+
+def rand_string_n(n):
+    """
+    Returns a random string of A,T,G,C characters of length n.
+    """
+    return ''.join([random.choice(['A','T','G','C']) for i in range(n)])
