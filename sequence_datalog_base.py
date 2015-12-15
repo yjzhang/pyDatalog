@@ -2,6 +2,8 @@ import random
 
 from pyDatalog import pyDatalog
 
+alphabet = ['A','T','G','C','N']
+
 # string length function
 def strlen(x):
     if isinstance(x,basestring):
