@@ -14,6 +14,7 @@ def strlen(x):
 
 # create required terms
 # variables
+pyDatalog.clear()
 pyDatalog.create_terms('X,Y,Z,LX,LY,N')
 
 def score(a,b):

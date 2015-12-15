@@ -12,6 +12,7 @@ def strlen(x):
         return len(x)
     return 0
 
+pyDatalog.clear()
 pyDatalog.create_terms('seeds,r,strlen,ss,Z,X,Y,N,SL,W')
 
 def build(args):
