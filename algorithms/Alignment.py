@@ -43,7 +43,7 @@ def KmerMatch(a,b,k):
     amers = getKmers(a,k)
     bmers = getKmers(b,k)
 
-    matches = list(set(amers) | set(bmers))
+    matches = list(set(amers) & set(bmers))
     #print(matches)
     #print(len(matches))
     if matches:
