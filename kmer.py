@@ -61,4 +61,5 @@ def usage():
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         usage()
-    exp(sys.argv[1:])
+    res = exp(sys.argv[1:])
+    print('{0},{1},{2},{3}'.format(int(sys.argv[1]),int(sys.argv[2]),res[0],res[1]))
