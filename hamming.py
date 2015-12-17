@@ -1,8 +1,12 @@
+#! /usr/bin/env/python
+
 import sys
 import time
 import random
 from algorithms import Alignment
 from pyDatalog import pyDatalog
+
+import cProfile, pstats, StringIO
 
 # create some python functions as helpers, because pyDatalog allows this
 
@@ -49,16 +53,23 @@ def ask(a,b):
     print(hs[a,b]==S)
 
 def exp(l):
+    pr = cProfile.Profile()
     alphabet = ['A','T','C','G']
     a = ''.join([random.choice(alphabet) for i in xrange(l)])
     b = ''.join([random.choice(alphabet) for i in xrange(l)])
 
     # perform experiment in pyDatalog
+    pr.enable()
     t = time.time()
     build([a,b])
     ask(a,b)
     pyDatalogTime = time.time() - t
     print('Time in pyDatalog: {0}'.format(pyDatalogTime))
+    pr.disable()
+    s = StringIO.StringIO()
+    ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
+    ps.print_stats()
+    print(s.getvalue())
 
     # perform experiment in native python
     t = time.time()
